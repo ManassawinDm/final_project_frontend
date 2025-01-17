@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  /* กำหนดฟอนต์ Sarabun ทั่วเว็บ */
+  * {
+    font-family: 'Sarabun', sans-serif;
+  }
+
+  /* กำหนดฟอนต์ Montserrat สำหรับ h1, h2, h3 */
+  h1, h2, h3 {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  /* กำหนดพื้นหลังและสีข้อความ */
+  body {
+    @apply bg-gray-200 text-foreground;
+  }
+}
+
+
+
