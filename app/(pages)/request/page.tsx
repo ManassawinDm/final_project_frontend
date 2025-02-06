@@ -6,8 +6,8 @@ import BtnSearch from '@/components/Request/BtnSearch'
 
 const Request = () => {
     return (
-        <div className=" min-h-screen flex justify-center py-8">
-            <div className="bg-white w-[98%] rounded-xl shadow-lg overflow-hidden">
+        <div className=" min-h-auto flex justify-center py-8">
+            <div className="bg-white h-screen w-[98%] rounded-xl shadow-lg overflow-hidden">
                 <div className="text-2xl px-8 py-5">
                     <p className="text-gray-700 font-bold">คำขอโยกย้าย ณ ตุลาคม 2567</p>
                 </div>

@@ -1,19 +1,65 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Table } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
+import axios from "axios";
+import Loading from "@/app/loading";
 
 const TableOrganization = () => {
+    const [request, setRequest] = useState<DataTypeRespose[]>([]);
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        getRequestAll();
+    }, []);
+
+    const getRequestAll = async () => {
+        try {
+            const res = await axios.get("http://localhost:8888/departments/all");
+            setRequest(res.data);
+            console.log(res.data)
+            setLoading(false)
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const transformedData: DataType[] = request.map((item, index) => ({
+
+        key: index+1,
+        name: item.name,
+        short_name: item.short_name,
+        address: item.address,
+        latitude: item.latitude,
+        longitude: item.longitude,
+        province: item.province,
+        area: item.area,
+        type: item.type,
+    }));
+
+    interface DataTypeRespose {
+        key: React.Key;
+        name: string;
+        short_name: string;
+        address: string;
+        latitude: number;
+        longitude: number;
+        province: string;
+        area: string;
+        type: string;
+    }
+
     interface DataType {
         key: React.Key;
         name: string;
-        senior: number;
-        location: string;
-        orderRequest: string;
-        move: string;
-        reason: string;
-        english: number;
+        short_name: string;
+        address: string;
+        latitude: number;
+        longitude: number;
+        province: string;
+        area: string;
+        type: string;
     }
 
     const columns: TableColumnsType<DataType> = [
@@ -22,90 +68,63 @@ const TableOrganization = () => {
             dataIndex: "key",
         },
         {
-            title: "ชื่อ-สกุล",
+            title: "ชื่อ",
             dataIndex: "name",
+            render: (text) => <span style={{ fontWeight: 300 }}>{text}</span>,
         },
         {
-            title: "อาวุโส",
-            dataIndex: "senior",
-            sorter: (a, b) => a.senior - b.senior,
+            title: "ชื่อย่อ",
+            dataIndex: "short_name",
+            align: "center",
+            render: (text) => <span style={{ fontWeight: 300 }}>{text}</span>,
         },
         {
-            title: "สถานที่ทำงาน",
-            dataIndex: "location",
-            sorter: (a, b) => (a.location > b.location ? 1 : -1),
+            title: "ที่อยู่",
+            dataIndex: "address",
+            align: "center",
+            render: (text) => <span style={{ fontWeight: 300 }}>{text}</span>,
         },
         {
-            title: "ลำดับขอย้าย",
-            dataIndex: "orderRequest",
-            sorter: (a, b) => (a.orderRequest > b.orderRequest ? 1 : -1),
+            title: "latitude",
+            dataIndex: "latitude",
+            align: "center",
+            render: (text) => <span style={{ fontWeight: 300 }}>{text}</span>,
         },
         {
-            title: "ขอย้าย",
-            dataIndex: "move",
-            sorter: (a, b) => (a.move > b.move ? 1 : -1),
+            title: "longitude",
+            dataIndex: "longitude",
+            align: "center",
+            render: (text) => <span style={{ fontWeight: 300 }}>{text}</span>,
         },
         {
-            title: "เหตุผล",
-            dataIndex: "reason",
-            sorter: (a, b) => (a.reason > b.reason ? 1 : -1),
+            title: "จังหวัด",
+            dataIndex: "province",
+            align: "center",
+            render: (text) => <span style={{ fontWeight: 300 }}>{text}</span>,
+        },
+        {
+            title: "พื้นที่",
+            dataIndex: "area",
+            align: "center",
+            render: (text) => <span style={{ fontWeight: 300 }}>{text}</span>,
         },
     ];
 
-    const data: DataType[] = [
-        {
-            key: "1",
-            name: "ชั้น 8",
-            senior: 98,
-            location: "กรุงเทพ",
-            orderRequest: "ขอย้าย",
-            move: "ย้ายได้",
-            reason: "ตามความต้องการ",
-            english: 70,
-        },
-        {
-            key: "2",
-            name: "ชั้น 7",
-            senior: 88,
-            location: "เชียงใหม่",
-            orderRequest: "ไม่ขอย้าย",
-            move: "ย้ายไม่ได้",
-            reason: "เหตุผลส่วนตัว",
-            english: 60,
-        },
-        {
-            key: "3",
-            name: "ชั้น 6",
-            senior: 78,
-            location: "ขอนแก่น",
-            orderRequest: "ขอย้าย",
-            move: "ย้ายได้",
-            reason: "ย้ายตามคำสั่ง",
-            english: 80,
-        },
-        {
-            key: "4",
-            name: "ชั้น 5",
-            senior: 68,
-            location: "ภูเก็ต",
-            orderRequest: "ขอย้าย",
-            move: "ย้ายได้",
-            reason: "ย้ายตามโปรเจ็ค",
-            english: 90,
-        },
-    ];
+
 
     const onChange: TableProps<DataType>["onChange"] = (pagination, filters, sorter, extra) => {
         console.log("params", pagination, filters, sorter, extra);
     };
 
+    if(loading) return <Loading/>
     return (
         <div style={{ overflowX: "auto" }}>
             <Table<DataType>
                 columns={columns}
-                dataSource={data}
+                dataSource={transformedData}
                 onChange={onChange}
-                scroll={{ x: 'max-content' }} 
+                scroll={{ x: 'max-content' }}
+                pagination={{ pageSize: 50}}
             />
         </div>
     );

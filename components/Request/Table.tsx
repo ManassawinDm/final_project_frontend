@@ -1,111 +1,89 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Table } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
+import axios from "axios";
+import Loading from "@/app/loading";
 
 const TablesRequest = () => {
     interface DataType {
         key: React.Key;
-        name: string;
-        senior: number;
-        location: string;
-        orderRequest: string;
-        move: string;
-        reason: string;
-        english: number;
+        fullname: string;
+        officeName: string;
+        class: string;
+    }
+
+    interface DataTypeRespose {
+        key: React.Key;
+        fullname: string;
+        officeName: string;
+        class: string;
     }
 
     const columns: TableColumnsType<DataType> = [
         {
             title: "#",
             dataIndex: "key",
+            align: "center",
         },
         {
             title: "ชื่อ-สกุล",
-            dataIndex: "name",
+            dataIndex: "fullname",
+            render: (text) => <span style={{ fontWeight: 300 }}>{text}</span>,
         },
         {
-            title: "อาวุโส",
-            dataIndex: "senior",
-            sorter: (a, b) => a.senior - b.senior,
+            title: "ชั้น",
+            dataIndex: "class",
+            align: "center",
+            render: (text) => <span style={{ fontWeight: 300 }}>{text}</span>,
         },
         {
-            title: "สถานที่ทำงาน",
-            dataIndex: "location",
-            sorter: (a, b) => (a.location > b.location ? 1 : -1),
+            title: "สถานที่ปฏิบัติการ",
+            dataIndex: "officeName",
+            align: "center",
+            render: (text) => <span style={{ fontWeight: 300 }}>{text}</span>,
         },
-        {
-            title: "ลำดับขอย้าย",
-            dataIndex: "orderRequest",
-            sorter: (a, b) => (a.orderRequest > b.orderRequest ? 1 : -1),
-        },
-        {
-            title: "ขอย้าย",
-            dataIndex: "move",
-            sorter: (a, b) => (a.move > b.move ? 1 : -1),
-        },
-        {
-            title: "เหตุผล",
-            dataIndex: "reason",
-            sorter: (a, b) => (a.reason > b.reason ? 1 : -1),
-        },
+
     ];
 
-    const data: DataType[] = [
-        {
-            key: "1",
-            name: "ชั้น 8",
-            senior: 98,
-            location: "กรุงเทพ",
-            orderRequest: "ขอย้าย",
-            move: "ย้ายได้",
-            reason: "ตามความต้องการ",
-            english: 70,
-        },
-        {
-            key: "2",
-            name: "ชั้น 7",
-            senior: 88,
-            location: "เชียงใหม่",
-            orderRequest: "ไม่ขอย้าย",
-            move: "ย้ายไม่ได้",
-            reason: "เหตุผลส่วนตัว",
-            english: 60,
-        },
-        {
-            key: "3",
-            name: "ชั้น 6",
-            senior: 78,
-            location: "ขอนแก่น",
-            orderRequest: "ขอย้าย",
-            move: "ย้ายได้",
-            reason: "ย้ายตามคำสั่ง",
-            english: 80,
-        },
-        {
-            key: "4",
-            name: "ชั้น 5",
-            senior: 68,
-            location: "ภูเก็ต",
-            orderRequest: "ขอย้าย",
-            move: "ย้ายได้",
-            reason: "ย้ายตามโปรเจ็ค",
-            english: 90,
-        },
-    ];
+    const [request, setRequest] = useState<DataTypeRespose[]>([]);
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        getRequestAll();
+    }, []);
+
+    const getRequestAll = async () => {
+        try {
+            const res = await axios.get("http://localhost:8888/request-transfer/user-request");
+            setRequest(res.data.result);
+            setLoading(false)
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const transformedData: DataType[] = request.map((item, index) => ({
+        key: index+1,
+        fullname: item.fullname,
+        officeName: item.officeName,
+        class: item.class,
+      }));
 
     const onChange: TableProps<DataType>["onChange"] = (pagination, filters, sorter, extra) => {
         console.log("params", pagination, filters, sorter, extra);
     };
 
+    if(loading) return <Loading/>
     return (
         <div style={{ overflowX: "auto" }}>
             <Table<DataType>
                 columns={columns}
-                dataSource={data}
+                dataSource={transformedData}
                 onChange={onChange}
-                scroll={{ x: 'max-content' }} 
+                scroll={{ x: 'max-content' }}
+                pagination={{ pageSize: 50 , hideOnSinglePage: true}}
             />
         </div>
     );

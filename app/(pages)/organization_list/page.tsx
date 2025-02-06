@@ -7,10 +7,10 @@ import { FiSearch } from "react-icons/fi";
 
 const Organizarion = () => {
     return (
-        <div className=" h-screen flex justify-center py-8">
+        <div className=" h-auto flex justify-center py-8">
             <div className="bg-white w-[98%] rounded-xl shadow-lg overflow-hidden ">
                 <div className="text-2xl px-8 py-5">
-                    <p className="text-gray-700 font-bold">จัดการผู้ใช้</p>
+                    <p className="text-gray-700 font-bold">รายชื่อสำนักงาน</p>
                 </div>
                 <div className="grid grid-row-3 w-full p-4 gap-y-5">
                     <div className="p-1">

@@ -1,111 +1,112 @@
-"use client";
+"use client"
 
-import React from "react";
-import MoverBtn from "./MoverBtn";
-import NotMoveBtn from "./NotMoveBtn";
-import ProcessBtn from "./ProcessBtn";
-import DelProcessBtn from "./DelProcessBtn";
-import DetailProcessBtn from "./DetailProcessBtn";
-
+import React, { useEffect, useState } from "react";
+import axios from 'axios';
 import { Table } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
+import Loading from "@/app/loading";
+
+interface DataTypeRespose {
+  key: React.Key;
+  description: string;
+  usersAll: number;
+  usersRequest: number;
+  usersRemaining: number;
+  combinedField: string;
+
+}
+
+interface DataType {
+  key: React.Key;
+  description: string;
+  usersAll: number;
+  usersRequest: number;
+  usersRemaining: number;
+  combinedField: string;
+
+}
 
 const Tables = () => {
-  interface DataType {
-    key: React.Key;
-    name: string;
-    chinese: number;
-    math: number;
-    english: number;
-  }
+  const [request, setRequest] = useState<DataTypeRespose[]>([]);
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getRequestAll();
+  }, []);
+
+  const getRequestAll = async () => {
+    try {
+      const res = await axios.get("http://localhost:8888/request-transfer/all");
+      setRequest(res.data.result);
+      setLoading(false)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const transformedData: DataType[] = request.map((item, index) => ({
+    key: index,
+    description: item.description,
+    usersAll: item.usersAll,
+    usersRequest: item.usersRequest,
+    usersRemaining: item.usersRemaining,
+    combinedField: item.combinedField
+  }));
 
   const columns: TableColumnsType<DataType> = [
     {
       title: "ชั้น",
-      dataIndex: "name",
+      dataIndex: "description",
+      align: "center",
+      render: (text) => <span style={{ fontWeight: 300 }}>{text}</span>,
     },
     {
-      title: "จำนวนอัยการทั้งหมด/จำนวนกรอบอัตรากำลังที่คงเหลือ",
-      dataIndex: "chinese",
-      sorter: {
-        compare: (a, b) => a.chinese - b.chinese,
-        multiple: 3,
-      },
+      title: "จำนวนอัยการทั้งหมด",
+      dataIndex: "usersAll",
+      align: "center",
+      render: (text) => <span style={{ fontWeight: 300 }}>{text}</span>,
+      sorter: (a, b) => a.usersAll - b.usersAll,
     },
     {
-      title: "ขอย้าย/ไม่ขอย้าย",
-      dataIndex: "math",
-      sorter: {
-        compare: (a, b) => a.math - b.math,
-        multiple: 2,
-      },
+      title: "ขอย้าย",
+      dataIndex: "usersRequest",
+      align: "center",
+      render: (text) => <span style={{ fontWeight: 300 }}>{text}</span>,
+      sorter: (a, b) => a.usersRequest - b.usersRequest,
     },
     {
-      title: "จำนวนอัยการที่ขอย้ายในชั้นนี้",
-      dataIndex: "english",
-      sorter: {
-        compare: (a, b) => a.english - b.english,
-        multiple: 1,
-      },
+      title: "ไม่ขอย้าย",
+      dataIndex: "usersRemaining",
+      align: "center",
+      render: (text) => <span style={{ fontWeight: 300 }}>{text}</span>,
+      sorter: (a, b) => a.usersRemaining - b.usersRemaining,
     },
     {
       title: "ย้ายได้/ย้ายไม่ได้-ตำแหน่งลอย/ตำแหน่งเหลือ",
-      dataIndex: "english",
-      sorter: {
-        compare: (a, b) => a.english - b.english,
-        multiple: 1,
-      },
+      dataIndex: "combinedField",
+      align: "center",
+      render: (text) => <span style={{ fontWeight: 300 }}>{text}</span>,
+
     },
     {
       title: "Actions",
       dataIndex: "actions",
+      align: "center",
       render: (_, record) => (
         <div className="grid grid-cols-1 grid-rows-3">
-          <div>
-            <p>รายการผู้ขอย้ายเท่านั้น: <MoverBtn /></p>
+          <div className="flex space-x-4 justify-center">
+            <button className="px-3 py-1 text-sm border border-[#1677FF] text-[#1677FF] rounded hover:bg-[#1677FF] hover:text-white transition duration-200">
+              ดูรายละเอียด
+            </button>
+            <button className="px-3 py-1 text-sm border border-[#1677FF] text-[#1677FF] rounded hover:bg-[#1677FF] hover:text-white transition duration-200">
+              ประมวลผล
+            </button>
+            <button className="px-3 py-1 text-sm border border-red-600 text-red-600 rounded hover:bg-red-800 hover:text-white transition duration-200">
+              ลบผล
+            </button>
           </div>
-          <div>
-            <p>รายการรวมผู้ไม่ขอย้าย: <NotMoveBtn /></p>
-          </div>
-          <div className="flex space-x-4">
-            <DetailProcessBtn />
-            <ProcessBtn />
-            <DelProcessBtn />
-          </div>
-
         </div>
       ),
-    },
-  ];
-
-  const data: DataType[] = [
-    {
-      key: "1",
-      name: "ชั้น 8",
-      chinese: 98,
-      math: 60,
-      english: 70,
-    },
-    {
-      key: "2",
-      name: "Jim Green",
-      chinese: 98,
-      math: 66,
-      english: 89,
-    },
-    {
-      key: "3",
-      name: "Joe Black",
-      chinese: 98,
-      math: 90,
-      english: 70,
-    },
-    {
-      key: "4",
-      name: "Jim Red",
-      chinese: 88,
-      math: 99,
-      english: 89,
     },
   ];
 
@@ -113,7 +114,7 @@ const Tables = () => {
     console.log("params", pagination, filters, sorter, extra);
   };
 
-  return <Table<DataType> columns={columns} dataSource={data} onChange={onChange} />;
+  return loading ? <Loading/> : <Table<DataType> columns={columns} dataSource={transformedData} onChange={onChange} pagination={{ pageSize: 50, hideOnSinglePage: true}} />;
 };
 
 export default Tables;
