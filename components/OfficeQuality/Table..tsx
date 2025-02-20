@@ -35,6 +35,7 @@ const TableOfficeQuality = () => {
   const [filteredData, setFilteredData] = useState<TableData[]>([]);
   const [inputValues, setInputValues] = useState<Record<string, number>>({});
   const [updatedRows, setUpdatedRows] = useState<Record<string, boolean>>({});
+  const [updateErrors, setUpdateErrors] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     getRequestAll();
@@ -85,20 +86,25 @@ const TableOfficeQuality = () => {
 
   const handleInputConfirm = async (id: number, key: string) => {
     const newQuantity = inputValues[key];
-  
+
     if (newQuantity !== undefined) {
       try {
         const response = await axios.post("http://localhost:8888/position/update", {
           id: id,
           quantity: newQuantity,
         });
-  
+
         if (response.data.success === true) {
           setUpdatedRows((prev) => ({
             ...prev,
             [key]: true,
           }));
-  
+
+          setUpdateErrors((prev) => ({
+            ...prev,
+            [key]: false,
+          }));
+
           toast.success("✅ อัปเดตจำนวนสำเร็จ!", {
             position: "top-right",
             autoClose: 2000,
@@ -110,8 +116,12 @@ const TableOfficeQuality = () => {
           });
         }
       } catch (error) {
-        console.error("❌ อัปเดตล้มเหลว:", error);
-        toast.error("❌ อัปเดตล้มเหลว!", {
+        console.log(error);
+        setUpdateErrors((prev) => ({
+          ...prev,
+          [key]: true,
+        }));
+        toast.error("❌ เกิดข้อผิดพลาดในการอัปเดต!", {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -123,7 +133,7 @@ const TableOfficeQuality = () => {
       }
     }
   };
-  
+
 
   const departments = Array.from(new Set(data.map((item) => item.departmentName)));
   const classes = Array.from(
@@ -158,20 +168,25 @@ const TableOfficeQuality = () => {
             <Input
               type="number"
               value={inputValues[record.key.toString()] ?? record.quantity}
+              min={0}
               onChange={(e) =>
                 handleInputChange(
                   record.key.toString(),
                   parseInt(e.target.value, 10)
                 )
               }
-              onPressEnter={() => handleInputConfirm(record.id, record.key.toString())} 
+              onPressEnter={() => handleInputConfirm(record.id, record.key.toString())}
               style={{ width: 100 }}
             />
-            {updatedRows[record.key.toString()] && (
+            {updatedRows[record.key.toString()] ? (
               <div style={{ color: "green", fontSize: "12px", marginTop: "4px" }}>
                 ✔ อัปเดตแล้ว
               </div>
-            )}
+            ) : updateErrors[record.key.toString()] ? (
+              <div style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
+                ❌ กรุณากรอกข้อมูลให้ถูกต้อง
+              </div>
+            ) : null}
           </div>
         );
       },

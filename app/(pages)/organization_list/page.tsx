@@ -7,7 +7,7 @@ import { FiSearch } from "react-icons/fi";
 
 const Organizarion = () => {
     return (
-        <div className=" h-auto flex justify-center py-8">
+        <div className=" min-h-screen h-auto flex justify-center py-8">
             <div className="bg-white w-[98%] rounded-xl shadow-lg overflow-hidden ">
                 <div className="text-2xl px-8 py-5">
                     <p className="text-gray-700 font-bold">รายชื่อสำนักงาน</p>

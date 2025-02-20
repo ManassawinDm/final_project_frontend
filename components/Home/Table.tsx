@@ -101,9 +101,6 @@ const Tables = () => {
             <button className="px-3 py-1 text-sm border border-[#1677FF] text-[#1677FF] rounded hover:bg-[#1677FF] hover:text-white transition duration-200">
               ประมวลผล
             </button>
-            <button className="px-3 py-1 text-sm border border-red-600 text-red-600 rounded hover:bg-red-800 hover:text-white transition duration-200">
-              ลบผล
-            </button>
           </div>
         </div>
       ),
