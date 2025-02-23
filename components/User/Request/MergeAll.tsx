@@ -2,16 +2,21 @@
 
 import React from "react";
 import CurrentInfo from "./CurrentInfo";
+import PersonalInfo from "./PersonalInfo";
+import RequestInfo from "./RequestInfo";
 
 const MergeAll = () => {
   return (
-    <div className="grid grid-rows-4">
+    <div className="grid grid-rows-[auto] gap-5">
       <div>
-        <CurrentInfo/>
+        <CurrentInfo />
       </div>
-      <div>2</div>
-      <div>3</div>
-      <div>4</div>
+      <div>
+        <PersonalInfo />
+      </div>
+      <div>
+        <RequestInfo />
+      </div>
     </div>
   );
 };
