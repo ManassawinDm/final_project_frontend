@@ -1,134 +1,326 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react';
-import { Table, Tag } from 'antd';
-import { useRouter } from 'next/navigation';
-import type { TableProps } from 'antd';
-import { Skeleton } from 'antd';
+import React, { useEffect, useState } from "react";
+import { Input, Table, Tag } from "antd";
+import { useParams, useRouter } from "next/navigation";
+import type { TableProps } from "antd";
+import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { GoCheckCircle } from "react-icons/go";
+import Swal from "sweetalert2";
+import { FaTrash } from "react-icons/fa";
+import { FaSave } from "react-icons/fa";
+import { AiFillEye } from "react-icons/ai";
+import { BiSolidCheckCircle } from "react-icons/bi";
+import { BiSolidXCircle } from "react-icons/bi";
 
-interface DataType {
-  key: string;
+interface responseType {
+  key: React.Key;
+  requestId: number;
+  userId: number;
   name: string;
-  age: number;
-  address: string;
-  availableOffice?: string; // New column for available office
+  class: number;
+  className: string;
+  currenClassId: number;
+  currenClass: string;
+  officeId: number;
+  officeName: string;
+  priority: number;
+  targetOffice: number;
+  targetOfficeName: string;
   tags: string[];
   status: string;
-  aiPredict?: string; // Optional aiPredict field
 }
 
-type ColumnsType<T extends object> = TableProps<T>['columns'];
+type ColumnsType<T extends object> = TableProps<T>["columns"];
 
-const App: React.FC = () => {
+const TablesResult: React.FC = () => {
   const router = useRouter();
+  const { classId } = useParams();
   const [loading, setLoading] = useState(true);
+  const [processData, setProcessData] = useState<responseType[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [filterStatus, setFilterStatus] = useState<"all" | "success" | "fail">("all");
+  const [searchText, setSearchText] = useState("");
 
-  const columns: ColumnsType<DataType> = [
+  useEffect(() => {
+    if (classId) {
+      fetchData();
+    }
+  }, [classId]);
+
+
+  const handleConfirmClick = (classId: number, requestId: number, officeId: number, userName: string, officeName: string) => {
+    Swal.fire({
+      title: "คุณแน่ใจหรือไม่?",
+      text: `คุณต้องยืนยันที่จะให้คุณ ${userName} ย้ายไปที่ ${officeName}หรือไม่?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#1677FF",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ตกลง",
+      cancelButtonText: "ยกเลิก",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleConfirm(requestId, classId, officeId);
+      }
+    });
+  };
+  const handleConfirm = async (requestId: number, classId: number, officeId: number) => {
+    // console.log("classId",classId)
+    // console.log("officeId",officeId)
+    // console.log("requestId",requestId)
+    const response = await axios.post("http://localhost:8888/request-transfer/comfirmoffice",
+      { requestId: requestId, classId: classId, officeId: officeId })
+    Swal.fire({
+      title: "ยืนยันโยกย้ายสำเร็จ!",
+      text: `ยืนยันโยกย้ายไปยังแล้ว`,
+      icon: "success",
+      confirmButtonText: "ตกลง",
+    })
+    fetchData();
+  };
+
+  const handleCancelClick = (classId: number, className: string) => {
+    Swal.fire({
+      title: "คุณแน่ใจหรือไม่?",
+      text: `คุณต้องการลบประมวลผล${className}หรือไม่?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#1677FF",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ตกลง",
+      cancelButtonText: "ยกเลิก",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleCancel(classId, className);
+      }
+    });
+  };
+
+  const handleCancel = async (classId: number, className: string) => {
+    try {
+      setIsProcessing(true);
+      Swal.fire({
+        title: "กำลังประมวลผล...",
+        text: "กรุณารอสักครู่",
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      const response = await axios.post("http://localhost:8888/request-transfer/delete", { classId: classId })
+      Swal.fire({
+        title: "ลบการประมวลผลสำเร็จ!",
+        text: `ลบการประมวลผล${className}แล้ว`,
+        icon: "success",
+        confirmButtonText: "ตกลง",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push("/");
+        }
+      });
+
+    } catch (error) {
+      console.error("Error processing request:", error);
+
+      Swal.fire({
+        title: "เกิดข้อผิดพลาด!",
+        text: "ไม่สามารถประมวลผลได้ กรุณาลองใหม่",
+        icon: "error",
+        confirmButtonText: "ตกลง",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8888/request-transfer/result/${classId}`);
+      const transformedData = response.data.data.map((item: responseType, index: number) => ({
+        ...item,
+        key: item.requestId ?? item.userId,
+        index: index + 1,
+        status: item.status === "Approved" ? "โยกย้ายสำเร็จ" : "โยกย้ายไม่สำเร็จ",
+      }));
+      setProcessData(transformedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFilter = (status: "all" | "success" | "fail") => {
+    setFilterStatus(status);
+  };
+
+  const filteredData = processData.filter((item) => {
+    if (filterStatus !== "all" && item.status !== (filterStatus === "success" ? "โยกย้ายสำเร็จ" : "โยกย้ายไม่สำเร็จ")) {
+      return false;
+    }
+    if (searchText) {
+      const searchLower = searchText.toLowerCase();
+      return (
+        item.name.toLowerCase().includes(searchLower) ||
+        item.userId.toString().includes(searchLower) ||
+        item.officeName.toLowerCase().includes(searchLower)
+      );
+    }
+    return true;
+  });
+
+  const columns: ColumnsType<responseType> = [
+    { title: "#", dataIndex: "index", key: "index" },
+    { title: "เลขผู้สูงอายุ", dataIndex: "userId", key: "userId" },
     {
-      title: 'เลขผู้สูงอายุ',
-      dataIndex: 'key',
-      key: 'key',
-    },
-    {
-      title: 'ชื่อ',
-      dataIndex: 'name',
-      key: 'name',
+      title: "ชื่อ",
+      dataIndex: "name",
+      key: "name",
       render: (text, record) => (
-        <a onClick={() => router.push(`/result/detail/${record.key}`)}>{text}</a>
-      ), // Name column is clickable and redirects to the detail page
-    },
-    {
-      title: 'ชั้น',
-      dataIndex: 'age',
-      key: 'age',
-      sorter: (a, b) => a.age - b.age, // Age column is sortable
-    },
-    {
-      title: 'สำนักงานปัจจุบัน',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
-      title: 'สำนักงานที่ย้ายได้',
-      dataIndex: 'availableOffice',
-      key: 'availableOffice',
-      render: (office) => office || <span style={{ color: '#d9d9d9' }}>N/A</span>,
-    },
-    {
-      title: 'ประเภท',
-      key: 'tags',
-      dataIndex: 'tags',
-      render: (tags: string[]) => (
-        <span>{tags.join(', ')}</span> // Tags column without colors
+        <a onClick={() => router.push(`/result/detail/${record.userId}`)}>{text}</a>
       ),
     },
+    { title: "ชั้นปัจจุบัน", dataIndex: "currenClass", key: "currenClass" },
+    { title: "สำนักงานปัจจุบัน", dataIndex: "officeName", key: "officeName" },
+    { title: "ชั้นที่ขอย้าย", dataIndex: "className", key: "className" },
     {
-      title: 'สถานะ',
-      dataIndex: 'status',
-      key: 'status',
+      title: "สำนักงานที่ย้ายไป",
+      dataIndex: "targetOfficeName",
+      key: "targetOfficeName",
+      render: (_, record) =>
+        record.status === "โยกย้ายไม่สำเร็จ" ? (
+          <span style={{ color: "#d9d9d9" }}>N/A</span>
+        ) : (
+          <span> <span className="font-bold">{record.priority}.</span> {record.targetOfficeName}</span>
+        ),
+    },
+    {
+      title: "Ai Tags",
+      key: "tags",
+      dataIndex: "tags",
+      render: (tags: string[]) => <span>{tags.join(", ")}</span>,
+    },
+    {
+      title: "การแนะนำ",
+      key: "recommendation",
+      render: (_, record) =>
+        record.status === "โยกย้ายไม่สำเร็จ" ? (
+          <span className="text-red-600 ">{record.targetOfficeName || "N/A"}</span>
+        ) : (
+          <span style={{ color: "#d9d9d9" }}></span>
+        ),
+    },
+    {
+      title: "สถานะ",
+      dataIndex: "status",
+      key: "status",
       render: (status: string) => (
-        <Tag color={status === 'โยกย้ายสำเร็จ' ? 'green' : 'red'}>
-          {status === 'โยกย้ายสำเร็จ' ? 'โยกย้ายสำเร็จ' : 'โยกย้ายไม่สำเร็จ'}
+        <Tag color={status === "โยกย้ายสำเร็จ" ? "green" : "red"}>
+          {status === "โยกย้ายสำเร็จ" ? "โยกย้ายสำเร็จ" : "โยกย้ายไม่สำเร็จ"}
         </Tag>
       ),
     },
+    // {
+    //   title: "รายละเอียด",
+    //   key: "more",
+    //   render: (_, record) => (
+    //     <a onClick={() => router.push(`/result/detail/${record.userId}`)} style={{ color: "#1890ff" }}>
+    //       ดูเพิ่มเติม
+    //     </a>
+    //   ),
+    // },
     {
-      title: 'การเเนะนำ',
-      dataIndex: 'aiPredict',
-      key: 'aiPredict',
-      render: (predict: string, record) => (
-        record.status !== 'transferable' && predict ? (
-          <p style={{ color: '#ff4d4f' }}>{predict}</p>
-        ) : (
-          <span style={{ color: '#d9d9d9' }}>N/A</span>
-        )
-      ),
-    },
-    {
-      title: 'ยืนยัน',
-      key: 'action',
-      render: (_, record) => (
-        record.status !== 'transferable' ? (
-          <a onClick={() => router.push(`/action/${record.key}`)} style={{ color: '#1890ff' }}>
+      title: "ยืนยัน",
+      key: "confirm",
+      render: (_, record) =>
+        record.status === "โยกย้ายไม่สำเร็จ" ? (
+          <Button
+            className="flex justify-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
+            onClick={() => handleConfirmClick(record.class, record.requestId, record.targetOffice, record.name, record.targetOfficeName)}
+          >
+            <GoCheckCircle />
             ยืนยัน
-          </a>
-        ) : null
-      ),
-    },
-    {
-        title: 'รายละอียด',
-        key: 'more',
-        render: (_, record) => (
-          record.status !== 'transferable' ? (
-            <a onClick={() => router.push(`/action/${record.key}`)} style={{ color: '#1890ff' }}>
-              ดูเพิ่มเติม
-            </a>
-          ) : null
+          </Button>
+        ) : (
+          <span style={{ color: "#d9d9d9" }}></span>
         ),
-      },
+    },
   ];
 
-  const data: DataType[] = Array.from({ length: 10 }, (_, i) => ({
-    key: `${i + 1}`,
-    name: `ชื่อพนักงาน ${i + 1}`,
-    age: 20 + (i % 30),
-    address: `สำนักงาน ${i % 5 + 1}`,
-    availableOffice: i % 3 === 0 ? `สำนักงาน ${i % 5 + 2}` : undefined,
-    tags: i % 2 === 0 ? ['ภูมิลำเนา','ป่วย','คู่สมรส'] : i %3 == 0 ?  ['ป่วย','คู่สมรส'] : ['อื่นๆ'],
-    status: i % 3 === 0 ? 'โยกย้ายสำเร็จ' : 'โยกย้ายไม่สำเร็จ',
-    aiPredict: i % 3 === 0 ?  undefined : `สำนักงาน ${i % 5 + 3}`,
-  }));
-
   return (
-    <div>
-      <Table<DataType>
-        columns={columns}
-        dataSource={data}
-        pagination={{ pageSize: 20 }}
-        tableLayout="auto"
-      />
+    <div className="flex flex-col gap-5">
+
+      {/* ✅ ปุ่มตัวกรองข้อมูล */}
+      <div className="flex flex-col md:flex-row justify-between items-center text-gray-700 space-y-2 md:space-y-0 md:space-x-2">
+        {/* ✅ ปุ่มตัวกรองข้อมูลทางซ้าย */}
+        <div className="flex flex-wrap gap-2">
+          <Button className="flex justify-center px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg"
+            onClick={() => handleFilter("success")}
+          >
+            <BiSolidCheckCircle />
+            ดูผู้ที่โยกย้ายสำเร็จ
+          </Button>
+          <Button className="flex justify-center px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg"
+            onClick={() => handleFilter("fail")}
+          >
+            <BiSolidXCircle />
+            ดูผู้ที่โยกย้ายไม่สำเร็จ
+          </Button>
+          <Button className="flex justify-center px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
+            onClick={() => router.push(`/result/office/${classId}`)}
+          >
+            <AiFillEye />
+            ดูมุมมองสำนักงาน
+          </Button>
+        </div>
+
+        {/* ✅ ช่องค้นหาทางขวาสุด */}
+        <div className="w-full md:w-auto flex justify-end">
+          <Input
+            placeholder="🔍 ค้นหา ชื่อ, เลขผู้สูงอายุ, หรือ สำนักงาน..."
+            className="w-full md:w-[500px] px-3 py-2 border rounded-md"
+            onChange={(e) => setSearchText(e.target.value)}
+          />
+        </div>
+
+      </div>
+
+
+      {/* ✅ ตารางผลลัพธ์ */}
+      <div className="border border-gray-300 rounded-lg shadow-md">
+        <Table<responseType>
+          columns={columns}
+          dataSource={filteredData}
+          loading={loading}
+          pagination={{ pageSize: 20 }}
+          tableLayout="auto"
+        />
+      </div>
+
+      {/* ✅ ปุ่มบันทึกและยกเลิก */}
+      <div className="flex justify-center">
+        <div className="px-5">
+          <Button className="w-full flex justify-center md:w-auto px-6 py-5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
+            <FaSave />
+            บันทึกข้อมูล
+          </Button>
+        </div>
+        <div className="px-5">
+          <Button className="w-full flex justify-center md:w-auto px-6 py-5 bg-red-500 hover:bg-red-600 text-white rounded-lg"
+            onClick={() => handleCancelClick(processData[0].class, processData[0].className)}
+            disabled={isProcessing}
+          >
+            <FaTrash />
+            {isProcessing ? "กำลังโหลด..." : "ยกเลิกการประมวลผล"}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default App;
+export default TablesResult;

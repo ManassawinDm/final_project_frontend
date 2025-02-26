@@ -47,7 +47,6 @@ const RequestInfo = () => {
                             <tr>
                                 <th className="px-4 py-2 border border-gray-100 w-auto whitespace-nowrap">ลำดับ</th>
                                 <th className="px-4 py-2 border border-gray-100">ต้องการย้ายไป/เหตุผล</th>
-                                <th className="px-4 py-2 border border-gray-100 w-auto whitespace-nowrap">สถานะ</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -66,9 +65,6 @@ const RequestInfo = () => {
                                         />
                                         <div className="text-sm flex py-1">เหตุผลการขอย้าย: <span className="text-red-600">(ไม่เกิน 100 ตัวอักษร)</span></div>
                                         <CurrentInfoInput name={`reason-${row.id}`} placeholder="กรอกเหตุผล" type="text"/>
-                                    </td>
-                                    <td className={`px-4 py-2 border border-gray-100 w-auto whitespace-nowrap ${row.status === "อนุมัติแล้ว" ? "text-green-600" : "text-red-600"}`}>
-                                        {row.status}
                                     </td>
                                 </tr>
                             ))}

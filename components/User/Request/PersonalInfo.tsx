@@ -88,19 +88,19 @@ const PersonalInfo = () => {
                                     <span className="whitespace-nowrap">ปัจจุบันพักอาศัยอยู่ ณ</span>
                                     <div className="flex flex-col">
                                         <span>บ้านเลขที่ :</span>
-                                        <CurrentInfoInput name="houseNumber" placeholder="บ้านเลขที่" type="text" height={40} width={400} />
+                                        <CurrentInfoInput name="houseNumber" placeholder="บ้านเลขที่" type="text" height={40} width={300} />
                                     </div>
                                     <div className="flex flex-col">
                                         <span>หมู่ที่ :</span>
-                                        <CurrentInfoInput name="villageNumber" placeholder="หมู่ที่" type="text" height={40} width={400} />
+                                        <CurrentInfoInput name="villageNumber" placeholder="หมู่ที่" type="text" height={40} width={300} />
                                     </div>
                                     <div className="flex flex-col">
                                         <span>ตรอกซอย :</span>
-                                        <CurrentInfoInput name="soi" placeholder="ตรอกซอย" type="text" height={40} width={400} />
+                                        <CurrentInfoInput name="soi" placeholder="ตรอกซอย" type="text" height={40} width={300} />
                                     </div>
                                     <div className="flex flex-col">
                                         <span>ถนน :</span>
-                                        <CurrentInfoInput name="road" placeholder="ถนน" type="text" height={40} width={400} />
+                                        <CurrentInfoInput name="road" placeholder="ถนน" type="text" height={40} width={300} />
                                     </div>
                                 </div>
                                 <div className="flex gap-x-10">
@@ -135,30 +135,30 @@ const PersonalInfo = () => {
                                     <span className="whitespace-nowrap">สามี/ภรรยาของข้าพเจ้าชื่อ </span>
                                     <div className="flex flex-col">
                                         <span>ชื่อสามี/ภรรยา :</span>
-                                        <CurrentInfoInput name="spouseName" placeholder="ชื่อสามี/ภรรยา" type="text" height={40} width={400} />
+                                        <CurrentInfoInput name="spouseName" placeholder="ชื่อสามี/ภรรยา" type="text" height={40} width={300} />
                                     </div>
                                     <div className="flex flex-col">
                                         <span>สถานที่ทำงาน :</span>
-                                        <CurrentInfoInput name="spouseOffice" placeholder="สถานที่ทำงาน" type="text" height={40} width={400} />
+                                        <CurrentInfoInput name="spouseOffice" placeholder="สถานที่ทำงาน" type="text" height={40} width={300} />
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-x-7">
                                     <span className="whitespace-nowrap">ปัจจุบันพักอาศัยอยู่ ณ</span>
                                     <div className="flex flex-col">
                                         <span>บ้านเลขที่ :</span>
-                                        <CurrentInfoInput name="spouseHouseNumber" placeholder="บ้านเลขที่" type="text" height={40} width={400} />
+                                        <CurrentInfoInput name="spouseHouseNumber" placeholder="บ้านเลขที่" type="text" height={40} width={300} />
                                     </div>
                                     <div className="flex flex-col">
                                         <span>หมู่ที่ :</span>
-                                        <CurrentInfoInput name="spouseVillageNumber" placeholder="หมู่ที่" type="text" height={40} width={400} />
+                                        <CurrentInfoInput name="spouseVillageNumber" placeholder="หมู่ที่" type="text" height={40} width={300} />
                                     </div>
                                     <div className="flex flex-col">
                                         <span>ตรอกซอย :</span>
-                                        <CurrentInfoInput name="spouseSoi" placeholder="ตรอกซอย" type="text" height={40} width={400} />
+                                        <CurrentInfoInput name="spouseSoi" placeholder="ตรอกซอย" type="text" height={40} width={300} />
                                     </div>
                                     <div className="flex flex-col">
                                         <span>ถนน :</span>
-                                        <CurrentInfoInput name="spouseRoad" placeholder="ถนน" type="text" height={40} width={400} />
+                                        <CurrentInfoInput name="spouseRoad" placeholder="ถนน" type="text" height={40} width={300} />
                                     </div>
                                 </div>
                                 <div className="flex gap-x-10">
