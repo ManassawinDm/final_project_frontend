@@ -7,16 +7,20 @@ interface ICurrentInfoInput {
     height?: number | string;
     width?: number | string;
     min?: number;
+    maxLength?: number;
+    value?: string | number;
     type: string;
+    disable?: boolean;
     onChange?: (name: string, value: string) => void;
     className?: string;
 }
 
 const CurrentInfoInput = (props: ICurrentInfoInput) => {
-    const { placeholder, width, min, type, height, name, onChange ,className} = props
+    const { placeholder, width, min, type, height, name, onChange, className, disable, maxLength, value } = props
     return (
         <div>
             <Input
+                maxLength={maxLength}
                 name={name}
                 type={type}
                 placeholder={placeholder}
@@ -24,6 +28,8 @@ const CurrentInfoInput = (props: ICurrentInfoInput) => {
                 style={{ width, height, }}
                 onChange={(e) => onChange?.(name, e.target.value)}
                 className={className}
+                disabled={disable}
+                value={value}
             />
         </div>
     );

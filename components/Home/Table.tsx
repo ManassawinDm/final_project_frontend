@@ -67,7 +67,6 @@ const Tables = () => {
         classId: classId,
       });
 
-      console.log("Response:", response.data);
 
       Swal.fire({
         title: "ประมวลผลสำเร็จ!",

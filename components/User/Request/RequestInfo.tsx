@@ -5,7 +5,13 @@ import { FaSave } from "react-icons/fa";
 import CurrenInfoSelect from './Input/CurrenInfoSelect';
 import CurrentInfoInput from './Input/CurrentInfoInput';
 
-const RequestInfo = () => {
+interface IRequestInfo{
+    disable:boolean;
+}
+
+const RequestInfo = (props:IRequestInfo) => {
+    const { disable } = props;
+
     const [data, setData] = useState(
         Array.from({ length: 20 }, (_, index) => ({
             id: index + 1,
@@ -45,15 +51,15 @@ const RequestInfo = () => {
                     <table className="w-full bg-white min-w-full table-auto">
                         <thead className="bg-gray-100">
                             <tr>
-                                <th className="px-4 py-2 border border-gray-100 w-auto whitespace-nowrap">ลำดับ</th>
-                                <th className="px-4 py-2 border border-gray-100">ต้องการย้ายไป/เหตุผล</th>
+                                <th className="px-4 py-2 border border-gray-100 w-1/12 whitespace-nowrap">ลำดับ</th>
+                                <th className="px-4 py-2 border border-gray-100 w-11/12">ต้องการย้ายไป/เหตุผล</th>
                             </tr>
                         </thead>
                         <tbody>
                             {data.map((row) => (
                                 <tr key={row.id} className="text-center">
-                                    <td className="px-4 py-2 border border-gray-100 w-auto whitespace-nowrap">{row.id}</td>
-                                    <td className="px-4 py-2 border border-gray-100">
+                                    <td className="px-4 py-2 border border-gray-100 w-1/12 whitespace-nowrap">{row.id}</td>
+                                    <td className="px-4 py-2 border border-gray-100 w-11/12">
                                         <CurrenInfoSelect
                                             IsSearch={true}
                                             name={`targetOffice-${row.id}`}
@@ -62,17 +68,19 @@ const RequestInfo = () => {
                                             onChange={(value) => handleReasonChange(row.id, value)}
                                             className="w-full"
                                             height={40}
+                                            disable={disable}
                                         />
                                         <div className="text-sm flex py-1">เหตุผลการขอย้าย: <span className="text-red-600">(ไม่เกิน 100 ตัวอักษร)</span></div>
-                                        <CurrentInfoInput name={`reason-${row.id}`} placeholder="กรอกเหตุผล" type="text"/>
+                                        <CurrentInfoInput name={`reason-${row.id}`} placeholder="กรอกเหตุผล" type="text" disable={disable} maxLength={100} />
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
-
-                <div>4</div>
+                <div className="flex justify-center">
+                <CurrenInfoBtn className="text-white bg-[#1677FF] hover:bg-[#1A8CFF] transition-colors duration-200 rounded-xl" label="บันทึกคำข้อโยกย้าย" height={40} type="button" icon={<FaSave />} />
+                </div>
             </div>
         </div>
     )

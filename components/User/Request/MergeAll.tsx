@@ -9,13 +9,13 @@ const MergeAll = () => {
   return (
     <div className="grid grid-rows-[auto] gap-5">
       <div>
-        <CurrentInfo />
+        <CurrentInfo disable={false} />
       </div>
       <div>
-        <PersonalInfo />
+        <PersonalInfo disable={false}/>
       </div>
       <div>
-        <RequestInfo />
+        <RequestInfo disable={false}/>
       </div>
     </div>
   );

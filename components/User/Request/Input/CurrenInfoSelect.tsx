@@ -4,23 +4,25 @@ import { Select } from "antd";
 
 interface ICurrenInfoSelect {
     name: string;
-    value?: string;
+    value?: string | number;
     className?: string;
     placeholder?: string;
     width?: number | string;
     height?: number | string;
     options?: { value: string; label: string }[];
     IsSearch: boolean;
-    onChange?: (name: string, value: string) => void;
+    disable?:boolean;
+    onChange?: (name: string, value: string | number) => void;
 }
 
 const CurrenInfoSelect = (props: ICurrenInfoSelect) => {
-    const { placeholder, width, options, IsSearch, height,onChange,name,value,className } = props
+    const { placeholder, width, options, IsSearch, height,onChange,name,value,className,disable } = props
     return (
         <div>
             <Select
                 showSearch={IsSearch}
                 placeholder={placeholder}
+                disabled={disable}
                 optionFilterProp="children"
                 filterOption={(input, option) =>
                     option?.label.toLowerCase().includes(input.toLowerCase()) ?? false

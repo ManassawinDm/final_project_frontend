@@ -30,6 +30,8 @@ interface responseType {
   targetOfficeName: string;
   tags: string[];
   status: string;
+  round: number;
+  year:number;
 }
 
 type ColumnsType<T extends object> = TableProps<T>["columns"];
@@ -49,6 +51,57 @@ const TablesResult: React.FC = () => {
     }
   }, [classId]);
 
+  const handleSaveClick = (classId: number, className:string) => {
+    Swal.fire({
+      title: "คุณแน่ใจหรือไม่?",
+      text: `คุณต้องยืนยันที่จะบันทึกข้อมูล${className} หรือไม่?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#1677FF",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ตกลง",
+      cancelButtonText: "ยกเลิก",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleSave(classId);
+      }
+    });
+  };
+
+  const handleSave = async (classId: number) => {
+    try {
+      const response = await axios.post("http://localhost:8888/request-transfer/report", { classId });
+  
+      if (response.data.success) {
+        if (response.data.data.success) {
+          await Swal.fire({
+            title: "บันทึกข้อมูลสำเร็จ!",
+            text: `บันทึกข้อมูลแล้ว`,
+            icon: "success",
+            confirmButtonText: "ตกลง",
+          });
+        } else {
+          await Swal.fire({
+            title: "บันทึกข้อมูลไม่ได้!",
+            text: `ยังมีคนที่ยังไม่ถูกโยกย้ายอยู่`,
+            icon: "error",
+            confirmButtonText: "ตกลง",
+          });
+        }
+        fetchData(); 
+      }
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดขณะบันทึกข้อมูล:", error);
+      await Swal.fire({
+        title: "ข้อผิดพลาด!",
+        text: "เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์",
+        icon: "error",
+        confirmButtonText: "ตกลง",
+      });
+    }
+  };
+  
+
 
   const handleConfirmClick = (classId: number, requestId: number, officeId: number, userName: string, officeName: string) => {
     Swal.fire({
@@ -67,18 +120,25 @@ const TablesResult: React.FC = () => {
     });
   };
   const handleConfirm = async (requestId: number, classId: number, officeId: number) => {
-    // console.log("classId",classId)
-    // console.log("officeId",officeId)
-    // console.log("requestId",requestId)
-    const response = await axios.post("http://localhost:8888/request-transfer/comfirmoffice",
-      { requestId: requestId, classId: classId, officeId: officeId })
-    Swal.fire({
-      title: "ยืนยันโยกย้ายสำเร็จ!",
-      text: `ยืนยันโยกย้ายไปยังแล้ว`,
-      icon: "success",
-      confirmButtonText: "ตกลง",
-    })
-    fetchData();
+    try {
+      const response = await axios.post("http://localhost:8888/request-transfer/comfirmoffice",
+        { requestId: requestId, classId: classId, officeId: officeId })
+      Swal.fire({
+        title: "ยืนยันโยกย้ายสำเร็จ!",
+        text: `ยืนยันโยกย้ายไปยังแล้ว`,
+        icon: "success",
+        confirmButtonText: "ตกลง",
+      })
+      fetchData();
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดขณะบันทึกข้อมูล:", error);
+      await Swal.fire({
+        title: "ข้อผิดพลาด!",
+        text: "เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์",
+        icon: "error",
+        confirmButtonText: "ตกลง",
+      });
+    }
   };
 
   const handleCancelClick = (classId: number, className: string) => {
@@ -304,7 +364,9 @@ const TablesResult: React.FC = () => {
       {/* ✅ ปุ่มบันทึกและยกเลิก */}
       <div className="flex justify-center">
         <div className="px-5">
-          <Button className="w-full flex justify-center md:w-auto px-6 py-5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
+          <Button className="w-full flex justify-center md:w-auto px-6 py-5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
+          onClick={() => handleSaveClick(processData[0].class,processData[0].className)}
+          >
             <FaSave />
             บันทึกข้อมูล
           </Button>
