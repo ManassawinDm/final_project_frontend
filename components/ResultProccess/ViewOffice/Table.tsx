@@ -40,8 +40,7 @@ const ViewPart = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`http://localhost:8888/request-transfer/result/office/${classId}`);
-
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/request-transfer/result/office/${classId}`);
       const formattedResult = response.data.data.groupedResult.map((office: responseType) => ({
         ...office,
         users: office.users.map((user) => ({
@@ -49,7 +48,6 @@ const ViewPart = () => {
           score: parseFloat(user.score ?? "0"),
         })),
       }));
-
       setProcessData(formattedResult);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -132,7 +130,7 @@ const ViewPart = () => {
       <div className="flex justify-center">
         <div className="px-5">
           <Button className="w-full flex justify-center md:w-auto px-6 py-5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
-          onClick={() => router.push(`/result/${classId}`)}
+          onClick={() => router.push(`/admin/result/${classId}`)}
           >
             <IoCaretBack />
             ย้อนกลับ

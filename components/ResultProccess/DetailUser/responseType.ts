@@ -6,6 +6,7 @@ export interface TransferRequest {
 
 export interface responseType {
     userId: number;
+    prename:string;
     firstname: string;
     lastname: string;
     age: number | null;

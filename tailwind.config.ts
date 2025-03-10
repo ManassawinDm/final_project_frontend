@@ -9,6 +9,12 @@ export default {
   ],
   theme: {
   	extend: {
+		animation: {
+			rotate1: "rotate1 2s linear infinite",
+			rotate2: "rotate2 2s linear infinite",
+			rotate3: "rotate3 2s linear infinite",
+			rotate4: "rotate4 2s linear infinite",
+		  },	
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',

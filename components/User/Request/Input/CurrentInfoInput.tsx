@@ -11,12 +11,13 @@ interface ICurrentInfoInput {
     value?: string | number;
     type: string;
     disable?: boolean;
+    required?: boolean;
     onChange?: (name: string, value: string) => void;
     className?: string;
 }
 
 const CurrentInfoInput = (props: ICurrentInfoInput) => {
-    const { placeholder, width, min, type, height, name, onChange, className, disable, maxLength, value } = props
+    const { placeholder, width, min, type, height, name, onChange, className, disable, maxLength, value, required } = props
     return (
         <div>
             <Input
@@ -30,6 +31,7 @@ const CurrentInfoInput = (props: ICurrentInfoInput) => {
                 className={className}
                 disabled={disable}
                 value={value}
+                required={required}
             />
         </div>
     );

@@ -13,6 +13,8 @@ import { FaSave } from "react-icons/fa";
 import { AiFillEye } from "react-icons/ai";
 import { BiSolidCheckCircle } from "react-icons/bi";
 import { BiSolidXCircle } from "react-icons/bi";
+import { FaSkullCrossbones } from "react-icons/fa";
+import { GiBigDiamondRing } from "react-icons/gi";
 
 interface responseType {
   key: React.Key;
@@ -31,7 +33,7 @@ interface responseType {
   tags: string[];
   status: string;
   round: number;
-  year:number;
+  year: number;
 }
 
 type ColumnsType<T extends object> = TableProps<T>["columns"];
@@ -51,7 +53,7 @@ const TablesResult: React.FC = () => {
     }
   }, [classId]);
 
-  const handleSaveClick = (classId: number, className:string) => {
+  const handleSaveClick = (classId: number, className: string) => {
     Swal.fire({
       title: "คุณแน่ใจหรือไม่?",
       text: `คุณต้องยืนยันที่จะบันทึกข้อมูล${className} หรือไม่?`,
@@ -70,8 +72,8 @@ const TablesResult: React.FC = () => {
 
   const handleSave = async (classId: number) => {
     try {
-      const response = await axios.post("http://localhost:8888/request-transfer/report", { classId });
-  
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/request-transfer/report`, { classId });
+
       if (response.data.success) {
         if (response.data.data.success) {
           await Swal.fire({
@@ -88,7 +90,7 @@ const TablesResult: React.FC = () => {
             confirmButtonText: "ตกลง",
           });
         }
-        fetchData(); 
+        fetchData();
       }
     } catch (error) {
       console.error("เกิดข้อผิดพลาดขณะบันทึกข้อมูล:", error);
@@ -100,13 +102,20 @@ const TablesResult: React.FC = () => {
       });
     }
   };
-  
+
 
 
   const handleConfirmClick = (classId: number, requestId: number, officeId: number, userName: string, officeName: string) => {
     Swal.fire({
       title: "คุณแน่ใจหรือไม่?",
-      text: `คุณต้องยืนยันที่จะให้คุณ ${userName} ย้ายไปที่ ${officeName}หรือไม่?`,
+      html: `
+        <p style="font-size: 18px; font-weight: 400; margin-bottom: 10px;">
+            คุณต้องการยืนยันให้ 
+            <span style="font-weight: bold; color: #d33;">${userName}</span>
+            <br>ย้ายไปที่ <br>
+            <span style="font-weight: bold; color: #d33;">${officeName}</span> หรือไม่?
+        </p>
+    `,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#1677FF",
@@ -115,17 +124,17 @@ const TablesResult: React.FC = () => {
       cancelButtonText: "ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
-        handleConfirm(requestId, classId, officeId);
+        handleConfirm(requestId, classId, officeId,officeName);
       }
     });
   };
-  const handleConfirm = async (requestId: number, classId: number, officeId: number) => {
+  const handleConfirm = async (requestId: number, classId: number, officeId: number,officeName:string) => {
     try {
-      const response = await axios.post("http://localhost:8888/request-transfer/comfirmoffice",
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/request-transfer/comfirmoffice`,
         { requestId: requestId, classId: classId, officeId: officeId })
       Swal.fire({
         title: "ยืนยันโยกย้ายสำเร็จ!",
-        text: `ยืนยันโยกย้ายไปยังแล้ว`,
+        html: `<p>ยืนยันโยกย้ายไปยัง<span style="font-weight: bold; color: #d33;">${officeName}</span> แล้ว</p>`,
         icon: "success",
         confirmButtonText: "ตกลง",
       })
@@ -170,7 +179,7 @@ const TablesResult: React.FC = () => {
           Swal.showLoading();
         },
       });
-      const response = await axios.post("http://localhost:8888/request-transfer/delete", { classId: classId })
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/request-transfer/delete`, { classId: classId })
       Swal.fire({
         title: "ลบการประมวลผลสำเร็จ!",
         text: `ลบการประมวลผล${className}แล้ว`,
@@ -178,7 +187,7 @@ const TablesResult: React.FC = () => {
         confirmButtonText: "ตกลง",
       }).then((result) => {
         if (result.isConfirmed) {
-          router.push("/");
+          router.push("/admin/dashboard");
         }
       });
 
@@ -199,13 +208,14 @@ const TablesResult: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`http://localhost:8888/request-transfer/result/${classId}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/request-transfer/result/${classId}`);
       const transformedData = response.data.data.map((item: responseType, index: number) => ({
         ...item,
         key: item.requestId ?? item.userId,
         index: index + 1,
         status: item.status === "Approved" ? "โยกย้ายสำเร็จ" : "โยกย้ายไม่สำเร็จ",
       }));
+      console.log(transformedData)
       setProcessData(transformedData);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -217,6 +227,16 @@ const TablesResult: React.FC = () => {
   const handleFilter = (status: "all" | "success" | "fail") => {
     setFilterStatus(status);
   };
+
+  const handleViewOffice = () => {
+    setIsProcessing(true);
+    router.push(`/admin/result/office/${classId}`);
+  };
+
+  const handleViewUser = (userId:number) => {
+    router.push(`/admin/result/detail/${userId}`);
+  };
+
 
   const filteredData = processData.filter((item) => {
     if (filterStatus !== "all" && item.status !== (filterStatus === "success" ? "โยกย้ายสำเร็จ" : "โยกย้ายไม่สำเร็จ")) {
@@ -241,7 +261,7 @@ const TablesResult: React.FC = () => {
       dataIndex: "name",
       key: "name",
       render: (text, record) => (
-        <a onClick={() => router.push(`/result/detail/${record.userId}`)}>{text}</a>
+        <a onClick={() => handleViewUser(record.userId)}>{text}</a>
       ),
     },
     { title: "ชั้นปัจจุบัน", dataIndex: "currenClass", key: "currenClass" },
@@ -262,7 +282,19 @@ const TablesResult: React.FC = () => {
       title: "Ai Tags",
       key: "tags",
       dataIndex: "tags",
-      render: (tags: string[]) => <span>{tags.join(", ")}</span>,
+      render: (tags: string[]) => (
+        <div className="flex flex-wrap gap-2"> {/* ใช้ flex เพื่อจัดเรียงในแนวนอน */}
+          {tags.map((tag, index) => (
+            tag.toLowerCase() === "sick" ? (
+              <FaSkullCrossbones key={index} className="text-red-500 text-lg" />
+            ) : tag.toLowerCase() === "spouse" ? (
+              <GiBigDiamondRing key={index} className="text-pink-500 text-lg" />
+            ) : (
+              <span key={index} className="text-gray-700">{tag}</span>
+            )
+          ))}
+        </div>
+      ),
     },
     {
       title: "การแนะนำ",
@@ -331,10 +363,10 @@ const TablesResult: React.FC = () => {
             ดูผู้ที่โยกย้ายไม่สำเร็จ
           </Button>
           <Button className="flex justify-center px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
-            onClick={() => router.push(`/result/office/${classId}`)}
+            onClick={() => handleViewOffice()}
           >
             <AiFillEye />
-            ดูมุมมองสำนักงาน
+            {isProcessing ? "กำลังโหลด..." : "ดูมุมมองสำนักงาน"}
           </Button>
         </div>
 
@@ -365,10 +397,11 @@ const TablesResult: React.FC = () => {
       <div className="flex justify-center">
         <div className="px-5">
           <Button className="w-full flex justify-center md:w-auto px-6 py-5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
-          onClick={() => handleSaveClick(processData[0].class,processData[0].className)}
+            onClick={() => handleSaveClick(processData[0].class, processData[0].className)}
+            disabled={isProcessing}
           >
             <FaSave />
-            บันทึกข้อมูล
+            {isProcessing ? "กำลังโหลด..." : "บันทึกข้อมูล"}
           </Button>
         </div>
         <div className="px-5">

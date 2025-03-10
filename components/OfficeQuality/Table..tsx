@@ -7,6 +7,7 @@ import axios from "axios";
 import Loading from "@/app/loading";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import api from "@/utils/api";
 
 const { Option } = Select;
 
@@ -47,7 +48,7 @@ const TableOfficeQuality = () => {
 
   const getRequestAll = async () => {
     try {
-      const res = await axios.get("http://localhost:8888/position/all");
+      const res = await api.get(`${process.env.NEXT_PUBLIC_BASE_URL}/position/all`);
       setData(res.data.data);
       setLoading(false);
     } catch (error) {
@@ -89,7 +90,7 @@ const TableOfficeQuality = () => {
 
     if (newQuantity !== undefined) {
       try {
-        const response = await axios.post("http://localhost:8888/position/update", {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/position/update`, {
           id: id,
           quantity: newQuantity,
         });

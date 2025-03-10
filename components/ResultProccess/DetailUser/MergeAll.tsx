@@ -28,7 +28,7 @@ const MergeAll = () => {
 
     const fetchData = async () => {
         try {
-          const response = await axios.get(`http://localhost:8888/users/result/detail/${userId}`);
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/users/result/detail/${userId}`);
           setTableResultDetailUserData(response.data.data.groupedResult[0].transfer_requests)
           setData(response.data.data.groupedResult)
         } catch (error) {
@@ -42,8 +42,8 @@ const MergeAll = () => {
     return (
         <div className="grid grid-rows-[auto] gap-5">
             <div className="flex justify-start">
-            <CurrenInfoBtn className="text-white bg-[#1677FF] hover:bg-[#1A8CFF] transition-colors duration-200 rounded-xl" label="ย้อนกลับ" height={40} type="button" icon={<IoCaretBack />} 
-            onClick={()=>router.push(`/result/${Data[0].targetClass}`)}
+            <CurrenInfoBtn className="text-white bg-[#4868AC] hover:bg-[#1A8CFF] transition-colors duration-200 rounded-xl" label="ย้อนกลับ" height={40} type="button" icon={<IoCaretBack />} 
+            onClick={()=>router.push(`/admin/result/${Data[0].targetClass}`)}
             
             />
             </div>

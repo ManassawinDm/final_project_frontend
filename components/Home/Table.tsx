@@ -43,7 +43,7 @@ const Tables = () => {
 
   const getRequestAll = async () => {
     try {
-      const res = await axios.get("http://localhost:8888/request-transfer/all");
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/request-transfer/all`);
       setRequest(res.data.result);
       setLoading(false);
     } catch (error) {
@@ -63,7 +63,7 @@ const Tables = () => {
           Swal.showLoading();
         },
       });
-      const response = await axios.post("http://localhost:8888/request-transfer", {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/request-transfer`, {
         classId: classId,
       });
 
@@ -103,11 +103,11 @@ const Tables = () => {
         },
       });
 
-      const response = await axios.get(`http://localhost:8888/request-transfer/result/${classId}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/request-transfer/result/${classId}`);
 
       if (response.data.data && Object.keys(response.data.data).length > 0) {
         Swal.close();
-        router.push(`/result/${classId}`);
+        router.push(`/admin/result/${classId}`);
       } else {
         Swal.fire({
           title: "ไม่มีข้อมูล",
@@ -200,14 +200,14 @@ const Tables = () => {
       render: (_, record) => (
         <div className="flex space-x-4 justify-center">
           <button
-            className="px-3 py-1 text-sm border border-[#1677FF] text-[#1677FF] rounded flex items-center gap-1 hover:bg-[#1677FF] hover:text-white transition duration-200"
+            className="px-3 py-1 text-sm border border-[#4868AC] text-[#4868AC] rounded flex items-center gap-1 hover:bg-[#1677FF] hover:text-white transition duration-200"
             onClick={() => checkAndRedirect(record.classId)}
             disabled={isProcessing}
           >
             <MdOutlineRemoveRedEye className="text-md" />
             {isProcessing ? "กำลังโหลด..." : "ดูรายละเอียด"}
           </button>
-          <button className="px-3 py-1 text-sm border border-[#1677FF] text-[#1677FF] rounded flex items-center gap-1 hover:bg-[#1677FF] hover:text-white transition duration-200"
+          <button className="px-3 py-1 text-sm border border-[#4868AC] text-[#4868AC] rounded flex items-center gap-1 hover:bg-[#1677FF] hover:text-white transition duration-200"
             onClick={() => handleProcessClick(record.classId, record.description)}
             disabled={isProcessing}
           >

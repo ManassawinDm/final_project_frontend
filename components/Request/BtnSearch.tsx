@@ -9,7 +9,7 @@ const BtnSearch = () => {
     return (
         <button
         onClick={handleClick}
-            className="cursor-pointer group relative flex items-center gap-1.5 px-3 py-2 bg-[#1677FF] bg-opacity-80 text-white rounded-3xl hover:bg-opacity-70 transition font-semibold shadow-md"
+            className="cursor-pointer group relative flex items-center gap-1.5 px-3 py-2 bg-[#4868AC] bg-opacity-80 text-white rounded-3xl hover:bg-opacity-70 transition font-semibold shadow-md"
         >
             <FiSearch className="text-sm" />
             <span className="text-sm p-1 font-light">ค้นหาข้อมูล</span>

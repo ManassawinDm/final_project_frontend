@@ -19,7 +19,7 @@ const TableResultDetailUser = (props: ITableResultDetailUser) => {
           dataIndex: "index",
           key: "index",
           width: 80,
-          align: "center" as const, // ใช้ 'center' แทน string ธรรมดา
+          align: "center" as const, 
           render: (_: any, __: TransferRequest, index: number) => index + 1, // กำหนดลำดับอัตโนมัติ
         },
         {
@@ -36,7 +36,7 @@ const TableResultDetailUser = (props: ITableResultDetailUser) => {
 
     return (
         <div className="grid grid-rows-[auto,1fr] gap-2 overflow-hidden rounded-xl border">
-            <div className="px-7 py-2 bg-[#1677FF] text-white text-lg inline-flex items-center gap-2">
+            <div className="px-7 py-2 bg-[#4868AC] text-white text-lg inline-flex items-center gap-2">
                 <RiFolderUserFill />
                 คำขอโยกย้ายทั้งหมด
             </div>

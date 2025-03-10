@@ -29,17 +29,17 @@ const InputRegister = () => {
     <input type="password" placeholder="password" className="w-full p-4 pl-10 bg-gray-200 border-0 rounded-md text-sm" />
   </div>
 
-  <button className="w-full p-4 bg-[#1677FF] text-white uppercase font-semibold text-sm rounded-md transition-all duration-300 hover:bg-blue-600 focus:outline-none">
+  <button className="w-full p-4 bg-[#4868AC] text-white uppercase font-semibold text-sm rounded-md transition-all duration-300 hover:bg-blue-600 focus:outline-none">
     login
   </button>
 
-  <button className="w-full p-4 bg-[#1677FF] text-white uppercase font-semibold text-sm rounded-md transition-all duration-300 hover:bg-blue-600 focus:outline-none mt-4 flex items-center justify-center">
+  <button className="w-full p-4 bg-[#4868AC] text-white uppercase font-semibold text-sm rounded-md transition-all duration-300 hover:bg-blue-600 focus:outline-none mt-4 flex items-center justify-center">
   Login with Google
 </button>
 
 
   <p className="mt-4 text-gray-500 text-xs">
-    มีบัญชีเเล้ว? <Link href="/login" className="text-[#1677FF] hover:underline">เข้าสู่ระบบ</Link>
+    มีบัญชีเเล้ว? <Link href="/login" className="text-[#4868AC] hover:underline">เข้าสู่ระบบ</Link>
   </p>
       </form>
     </>

@@ -18,7 +18,7 @@ const CheckBoxAll: React.FC = () => {
           type="checkbox" 
           checked={checked} 
           onChange={handleChange} 
-          className="w-4 h-4 rounded-full border-1 border-gray-200 bg-white checked:bg-[#1677FF] checked:border-[#1677FF] focus:ring-0 transition-all duration-300 ease-in-out" 
+          className="w-4 h-4 rounded-full border-1 border-gray-200 bg-white checked:bg-[#4868AC] checked:border-[#4868AC] focus:ring-0 transition-all duration-300 ease-in-out" 
         />
       </label>
     </div>
